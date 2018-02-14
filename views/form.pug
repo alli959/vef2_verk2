@@ -1,4 +1,19 @@
 extends layout
 
 block content
-  p Form!
+  form(method='POST' action='/register')
+    div.form-group
+      label(for='name') Nafn
+      input#name.form-control(type='text', name='name')
+    div.form-group
+      label(for='email') Email
+      input#email.form-control(type='email', name='email')
+    div.form-group
+      label(for='ssn') Kennitala
+      input#ssn.form-control(type='text', name='ssn')
+    div.form-group
+      label(for='count') Fjöldi
+      input#count.form-control(type='number' name='count')
+    button.btn.btn-primary(type='submit') Senda
+
+

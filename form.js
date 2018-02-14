@@ -1,5 +1,7 @@
 const express = require('express');
 
+const pug = require('pug')
+
 const router = express.Router();
 
 function form(req, res) {
@@ -9,4 +11,13 @@ function form(req, res) {
 
 router.get('/', form);
 
+var name = "Hello";
+
+
 module.exports = router;
+
+
+
+
+
+
