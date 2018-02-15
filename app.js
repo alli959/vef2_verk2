@@ -16,6 +16,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', form);
 app.use('/admin', admin);
 
+app.get('/', (req, res) => {
+  res.send(template());
+});
+
+app.post('/post', (req, res) => {
+  const {
+    name = '',
+    email = '',
+    ssn = '',
+  } = req.body;
+});
+
 function notFoundHandler(req, res, next) { // eslint-disable-line
   res.status(404).render('error', { title: '404' });
 }
