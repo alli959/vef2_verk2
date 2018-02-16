@@ -8,6 +8,8 @@ var bodyParser = require("body-parser");
 const pug = require('pug');
 const compiledFunctionLogin = pug.compileFile('views/login.pug');
 
+const users = require('./users');
+
 
 const form = require('./form');
 const admin = require('./admin');
@@ -25,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', form);
 app.use('/post', form);
-app.use('/admin', form);
+app.use('/admin', admin);
 
 
 
@@ -101,11 +103,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.send(`
-    ${compiledFunctionLogin({
-      usr: '',
-      password: ''
-    })} 
+  res.send(
+  `
+  <form method="post" action="/login">
+    <label>Notendanafn: <input type="text" name="username"></label>
+    <label>Lykilorð: <input type="password" name="password"></label>
+    <button>Innskrá</button>
+  </form>
+
   `);
 });
 
@@ -126,7 +131,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/admin', ensureLoggedIn, (req, res) => {
   res.send(`
-    <p>Hér eru leyndarmál</p>
+    <p>innskráður</p>
     <p><a href="/">Forsíða</a></p>
   `);
 });

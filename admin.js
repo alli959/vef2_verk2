@@ -25,8 +25,12 @@ const connectionString = 'postgres://:@localhost/examples';
 async function admin(req, res){
     console.log(req.body)
     const data = {};
-    return res.render('form', { data });
+    return res.render('admin', { data });
   }
+
+  router.get('/admin', admin);
+
+
 
 
 

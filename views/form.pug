@@ -1,21 +1,22 @@
 extends layout
 
 block content
-  form(method='post' name='post' action='/post')
-    div.form-group
-      label(for='name') Nafn
-      input#name.form-control(type='text', name='name')
-    div.form-group
-      label(for='email') Email
-      input#email.form-control(type='email', name='email')
-    div.form-group
-      label(for='ssn') Kennitala
-      input#ssn.form-control(type='text', name='ssn')
-    div.form-group
-      label(for='count') Fjöldi
-      input#count.form-control(type='number' name='count')
-    button.btn.btn-primary(type='submit') Senda
-    p
-  a(href='login') Innskraning
+  div.form
+    form(method='post' name='post' action='/post')
+      div.form-group
+        label(for='name') Nafn
+        input#name.form-control(type='text', name='name')
+      div.form-group
+        label(for='email') Email
+        input#email.form-control(type='email', name='email')
+      div.form-group
+        label(for='ssn') Kennitala
+        input#ssn.form-control(type='text', name='ssn')
+      div.form-group
+        label(for='count') Fjöldi
+        input#count.form-control(type='number' name='count')
+      button.btn.btn-primary(type='submit') Senda
+      p
+    a(href='login') Innskraning
 
 
