@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  form(method='POST' action='/')
+  form(method='post' name='post' action='/post')
     div.form-group
       label(for='name') Nafn
       input#name.form-control(type='text', name='name')
@@ -15,5 +15,7 @@ block content
       label(for='count') Fjöldi
       input#count.form-control(type='number' name='count')
     button.btn.btn-primary(type='submit') Senda
+    p
+  a(href='login') Innskraning
 
 

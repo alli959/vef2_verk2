@@ -2,9 +2,17 @@ const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const passport = require('passport');
+const { Strategy } = require('passport-local');
+var bodyParser = require("body-parser");
+const pug = require('pug');
+const compiledFunctionLogin = pug.compileFile('views/login.pug');
+
 
 const form = require('./form');
 const admin = require('./admin');
+
+const Secret = 'secret';
 
 const app = express();
 
@@ -12,21 +20,121 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/', form);
-app.use('/admin', admin);
+app.use('/post', form);
+app.use('/admin', form);
+
+
+
+const sessionSecret = 'leyndarmál';
+
+app.use(session({
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+}));
+
+function strat(username, password, done) {
+  users
+    .findByUsername(username)
+    .then((user) => {
+      if (!user) {
+        return done(null, false);
+      }
+
+      return users.comparePasswords(password, user);
+    })
+    .then(res => done(null, res))
+    .catch((err) => {
+      done(err);
+    });
+}
+
+passport.use(new Strategy(strat));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  users
+    .findById(id)
+    .then(user => done(null, user))
+    .catch(err => done(err));
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  if (req.isAuthenticated()) {
+    // getum núna notað user í viewum
+    res.locals.user = req.user;
+  }
+
+  next();
+});
+
+function ensureLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  return res.redirect('/login');
+}
 
 app.get('/', (req, res) => {
-  res.send(template());
+  if (req.isAuthenticated()) {
+    return res.send(`
+      <p>Innskráning sem ${req.user.username}</p>
+      <p><a href="/logout">Útskráning</a></p>
+      <p><a href="/admin">Skoða leyndarmál</a></p>
+    `);
+  }
+
+  return res.send(`
+    <p><a href="/login">Innskráning</a></p>
+  `);
 });
 
-app.post('/post', (req, res) => {
-  const {
-    name = '',
-    email = '',
-    ssn = '',
-  } = req.body;
+app.get('/login', (req, res) => {
+  res.send(`
+    ${compiledFunctionLogin({
+      usr: '',
+      password: ''
+    })} 
+  `);
 });
+
+app.post(
+  '/login',
+  passport.authenticate('local', {
+    failureRedirect: '/login',
+  }),
+  (req, res) => {
+    res.redirect('/admin');
+  },
+);
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+app.get('/admin', ensureLoggedIn, (req, res) => {
+  res.send(`
+    <p>Hér eru leyndarmál</p>
+    <p><a href="/">Forsíða</a></p>
+  `);
+});
+
+
+
+
+
 
 function notFoundHandler(req, res, next) { // eslint-disable-line
   res.status(404).render('error', { title: '404' });
